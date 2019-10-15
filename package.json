@@ -1,0 +1,25 @@
+{
+  "name": "yet-another-duration",
+  "version": "1.0.0",
+  "description": "This library helps to convert millisecond to duration string.",
+  "main": "dist/main.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "build": "webpack --progress",
+    "watch": "npm run build -- --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "duration",
+    "milliseconds"
+  ],
+  "author": "Ilja Denisovs <i.denisovs@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^12.7.12",
+    "ts-loader": "^6.2.0",
+    "typescript": "^3.6.4",
+    "webpack": "^4.41.1",
+    "webpack-cli": "^3.3.9"
+  }
+}
