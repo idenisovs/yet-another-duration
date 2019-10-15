@@ -1,3 +1,5 @@
-module.exports = function yetAnotherDuration(duration: number): string {
-    return `Duration is: ${duration}`;
-};
+import Duration from './duration';
+
+export function duration(value: number): Duration {
+    return new Duration(value);
+}

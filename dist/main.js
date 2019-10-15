@@ -7,7 +7,7 @@
 		exports["yetAnotherDuration"] = factory();
 	else
 		root["yetAnotherDuration"] = factory();
-})(window, function() {
+})(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -96,16 +96,60 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/duration.ts":
+/*!*************************!*\
+  !*** ./src/duration.ts ***!
+  \*************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var SEC = 1000;
+var MIN = SEC * 60;
+var HOUR = MIN * 60;
+var DAY = HOUR * 24;
+var WEEK = DAY * 7;
+var Duration = /** @class */ (function () {
+    function Duration(duration) {
+        this.duration = duration;
+    }
+    Duration.prototype.toObject = function () {
+        var rem = this.duration;
+        var weeks = Math.floor(rem / WEEK);
+        rem -= weeks * WEEK;
+        var days = Math.floor(rem / DAY);
+        rem -= days * DAY;
+        var hours = Math.floor(rem / HOUR);
+        rem -= hours * HOUR;
+        var minutes = Math.floor(rem / MIN);
+        rem -= minutes * MIN;
+        var seconds = Math.floor(rem / SEC);
+        rem -= seconds * SEC;
+        return { weeks: weeks, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: rem };
+    };
+    return Duration;
+}());
+/* harmony default export */ __webpack_exports__["default"] = (Duration);
+
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! exports provided: duration */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = function yetAnotherDuration(duration) {
-    return "Duration is: " + duration;
-};
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "duration", function() { return duration; });
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+
+function duration(value) {
+    return new _duration__WEBPACK_IMPORTED_MODULE_0__["default"](value);
+}
 
 
 /***/ })

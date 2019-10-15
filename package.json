@@ -4,6 +4,10 @@
   "description": "This library helps to convert millisecond to duration string.",
   "main": "dist/main.js",
   "types": "types/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:idenisovs/yet-another-duration.git"
+  },
   "scripts": {
     "build": "webpack --progress",
     "watch": "npm run build -- --watch",

@@ -1,7 +1,23 @@
 declare module 'yet-another-duration' {
+    export interface DurationObject {
+        weeks: number;
+        days: number;
+        hours: number;
+        minutes: number;
+        seconds: number;
+        milliseconds: number;
+    }
+
     /**
-     * This function helps to convert duration (in milliseconds) to different kind of strings or object.
-     * @param {Number} duration (in milliseconds)
+     * Duration class.
      */
-    export default function yetAnotherDuration(duration: number): string;
+    export class Duration {
+        toObject(): DurationObject;
+    }
+
+    /**
+     * Convert milliseconds to duration
+     * @param duration
+     */
+    export function duration(duration: number): Duration;
 }

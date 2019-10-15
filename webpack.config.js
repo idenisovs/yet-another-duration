@@ -11,10 +11,14 @@ module.exports = {
             exclude: /node_modules/
         }]
     },
+    resolve: {
+        extensions: ['.ts']
+    },
     output: {
         filename: "main.js",
         path: path.resolve(__dirname, 'dist'),
         library: "yetAnotherDuration",
-        libraryTarget: "umd"
+        libraryTarget: "umd",
+        globalObject: "typeof self !== 'undefined' ? self : this"
     }
 };

@@ -5,15 +5,15 @@
 ### JavaScript
 
 ```JavaScript
-const duration = require('yet-another-duration');
+const {duration} = require('yet-another-duration');
 
-duration(1234567).toString();
+duration(1234567).toObject();
 ```
 
 ### TypeScript
 
 ```typescript
-import duration from 'yet-another-duration';
+import {duration} from 'yet-another-duration';
 
-duration(1234567).toString();
+duration(1234567).toObject();
 ```
