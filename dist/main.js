@@ -105,16 +105,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var SEC = 1000;
-var MIN = SEC * 60;
-var HOUR = MIN * 60;
-var DAY = HOUR * 24;
-var WEEK = DAY * 7;
 var Duration = /** @class */ (function () {
     function Duration(duration) {
         this.duration = duration;
     }
     Duration.prototype.toObject = function () {
+        var WEEK = Duration.WEEK, DAY = Duration.DAY, HOUR = Duration.HOUR, MIN = Duration.MIN, SEC = Duration.SEC;
         var rem = this.duration;
         var weeks = Math.floor(rem / WEEK);
         rem -= weeks * WEEK;
@@ -128,6 +124,11 @@ var Duration = /** @class */ (function () {
         rem -= seconds * SEC;
         return { weeks: weeks, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: rem };
     };
+    Duration.SEC = 1000;
+    Duration.MIN = Duration.SEC * 60;
+    Duration.HOUR = Duration.MIN * 60;
+    Duration.DAY = Duration.HOUR * 24;
+    Duration.WEEK = Duration.DAY * 7;
     return Duration;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Duration);
@@ -139,16 +140,20 @@ var Duration = /** @class */ (function () {
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
-/*! exports provided: duration */
+/*! exports provided: duration, defaults */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "duration", function() { return duration; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaults", function() { return defaults; });
 /* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
 
 function duration(value) {
     return new _duration__WEBPACK_IMPORTED_MODULE_0__["default"](value);
+}
+function defaults() {
+    return duration;
 }
 
 

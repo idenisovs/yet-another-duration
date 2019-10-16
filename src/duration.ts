@@ -1,12 +1,12 @@
 import DurationObject from './duration-object';
 
-const SEC = 1000;
-const MIN = SEC * 60;
-const HOUR = MIN * 60;
-const DAY = HOUR * 24;
-const WEEK = DAY * 7;
-
 export default class Duration {
+    public static readonly SEC = 1000;
+    public static readonly MIN = Duration.SEC * 60;
+    public static readonly HOUR = Duration.MIN * 60;
+    public static readonly DAY = Duration.HOUR * 24;
+    public static readonly WEEK = Duration.DAY * 7;
+    
     private readonly duration: number;
 
     constructor(duration: number) {
@@ -14,6 +14,8 @@ export default class Duration {
     }
 
     toObject(): DurationObject {
+        const { WEEK, DAY, HOUR, MIN, SEC } = Duration;
+
         let rem = this.duration;
 
         const weeks = Math.floor(rem / WEEK);

@@ -20,4 +20,5 @@ declare module 'yet-another-duration' {
      * @param duration
      */
     export function duration(duration: number): Duration;
+    export function defaults(): (duration: number) => Duration;
 }
