@@ -1,6 +1,9 @@
 import Duration from './duration';
+import DurationConfig from './duration-config';
 
-const DEFAULT_CONFIG = {};
+const DEFAULT_CONFIG: DurationConfig = {
+    calculateWeeks: false
+};
 
 export function duration(value: number, config = DEFAULT_CONFIG): Duration {
     return new Duration(value, config);
@@ -8,7 +11,7 @@ export function duration(value: number, config = DEFAULT_CONFIG): Duration {
 
 duration.defaults = defaults;
 
-function defaults(defaultConfig: any) {
+function defaults(defaultConfig: DurationConfig) {
     function bootstrappedDuration(value: number, config = defaultConfig) {
         return duration(value, config);
     }

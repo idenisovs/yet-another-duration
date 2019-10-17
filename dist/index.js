@@ -108,12 +108,16 @@ __webpack_require__.r(__webpack_exports__);
 var Duration = /** @class */ (function () {
     function Duration(duration, config) {
         this.duration = duration;
+        this.config = config;
     }
     Duration.prototype.toObject = function () {
         var WEEK = Duration.WEEK, DAY = Duration.DAY, HOUR = Duration.HOUR, MIN = Duration.MIN, SEC = Duration.SEC;
         var rem = this.duration;
-        var weeks = Math.floor(rem / WEEK);
-        rem -= weeks * WEEK;
+        var weeks = 0;
+        if (this.config.calculateWeeks) {
+            weeks = Math.floor(rem / WEEK);
+            rem -= weeks * WEEK;
+        }
         var days = Math.floor(rem / DAY);
         rem -= days * DAY;
         var hours = Math.floor(rem / HOUR);
@@ -122,13 +126,18 @@ var Duration = /** @class */ (function () {
         rem -= minutes * MIN;
         var seconds = Math.floor(rem / SEC);
         rem -= seconds * SEC;
-        return { weeks: weeks, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: rem };
+        var result = { days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: rem };
+        if (this.config.calculateWeeks) {
+            result.weeks = weeks;
+        }
+        return result;
     };
     Duration.SEC = 1000;
     Duration.MIN = Duration.SEC * 60;
     Duration.HOUR = Duration.MIN * 60;
     Duration.DAY = Duration.HOUR * 24;
     Duration.WEEK = Duration.DAY * 7;
+    Duration.MONTH = Duration.DAY * 31;
     return Duration;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Duration);
@@ -148,7 +157,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "duration", function() { return duration; });
 /* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
 
-var DEFAULT_CONFIG = {};
+var DEFAULT_CONFIG = {
+    calculateWeeks: false
+};
 function duration(value, config) {
     if (config === void 0) { config = DEFAULT_CONFIG; }
     return new _duration__WEBPACK_IMPORTED_MODULE_0__["default"](value, config);

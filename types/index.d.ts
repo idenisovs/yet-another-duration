@@ -1,8 +1,9 @@
 import Duration from './duration';
-export declare function duration(value: number, config?: {}): Duration;
+import DurationConfig from './duration-config';
+export declare function duration(value: number, config?: DurationConfig): Duration;
 export declare namespace duration {
-    var defaults: (defaultConfig: any) => {
-        (value: number, config?: any): Duration;
+    var defaults: (defaultConfig: DurationConfig) => {
+        (value: number, config?: DurationConfig): Duration;
         defaults: any;
     };
 }

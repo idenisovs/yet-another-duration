@@ -1,4 +1,5 @@
 import DurationObject from './duration-object';
+import DurationConfig from './duration-config';
 
 export default class Duration {
     public static readonly SEC = 1000;
@@ -6,12 +7,14 @@ export default class Duration {
     public static readonly HOUR = Duration.MIN * 60;
     public static readonly DAY = Duration.HOUR * 24;
     public static readonly WEEK = Duration.DAY * 7;
+    public static readonly MONTH = Duration.DAY * 31;
     
     private readonly duration: number;
-    private readonly config: any;
+    private readonly config: DurationConfig;
 
-    constructor(duration: number, config: any) {
+    constructor(duration: number, config: DurationConfig) {
         this.duration = duration;
+        this.config = config;
     }
 
     toObject(): DurationObject {
@@ -19,8 +22,12 @@ export default class Duration {
 
         let rem = this.duration;
 
-        const weeks = Math.floor(rem / WEEK);
-        rem -= weeks * WEEK;
+        let weeks = 0;
+
+        if (this.config.calculateWeeks) {
+            weeks = Math.floor(rem / WEEK);
+            rem -= weeks * WEEK;
+        }
 
         const days = Math.floor(rem / DAY);
         rem -= days * DAY;
@@ -34,6 +41,12 @@ export default class Duration {
         const seconds = Math.floor(rem / SEC);
         rem -= seconds * SEC;
 
-        return { weeks, days, hours, minutes, seconds, milliseconds: rem }
+        const result: DurationObject = { days, hours, minutes, seconds, milliseconds: rem };
+
+        if (this.config.calculateWeeks) {
+            result.weeks = weeks;
+        }
+
+        return result;
     }
 }

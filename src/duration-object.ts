@@ -1,5 +1,5 @@
 export default interface DurationObject {
-    weeks: number;
+    weeks?: number;
     days: number;
     hours: number;
     minutes: number;
