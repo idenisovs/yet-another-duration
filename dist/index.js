@@ -162,11 +162,10 @@ function defaults(defaultConfig) {
     bootstrappedDuration.defaults = defaults;
     return bootstrappedDuration;
 }
-;
 
 
 /***/ })
 
 /******/ });
 });
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=index.js.map

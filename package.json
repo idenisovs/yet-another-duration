@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This library helps to convert millisecond to duration string.",
   "main": "dist/main.js",
-  "types": "types/src/index.d.ts",
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git@github.com:idenisovs/yet-another-duration.git"
