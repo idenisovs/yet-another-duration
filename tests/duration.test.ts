@@ -22,7 +22,7 @@ describe("Duration class", () => {
         test('Duration input match duration output', () => {
             const { WEEK, DAY, HOUR, MIN, SEC } = Duration;
 
-            const input = WEEK * 6
+            const input = WEEK * 3
                 + DAY * 5
                 + HOUR * 4
                 + MIN * 30
@@ -31,12 +31,36 @@ describe("Duration class", () => {
             const output = (new Duration(input, config)).toObject();
 
             expect(output).toMatchObject({
-                weeks: 6,
+                weeks: 3,
                 days: 5,
                 hours: 4,
                 minutes: 30,
                 seconds: 15,
                 milliseconds: 0
+            });
+        });
+
+        test('Duration input match duration output (w/out weeks)', () => {
+            const { YEAR, DAY, HOUR, MIN, SEC } = Duration;
+
+            const input = YEAR * 2
+                + (DAY * 31 + DAY * 30) * 2
+                + DAY * 15
+                + HOUR * 8
+                + MIN * 30
+                + SEC * 15
+                + 123;
+
+            const output = (new Duration(input, { calculateWeeks: false })).toObject();
+
+            expect(output).toMatchObject({
+                years: 2,
+                months: 4,
+                days: 15,
+                hours: 8,
+                minutes: 30,
+                seconds: 15,
+                milliseconds: 123
             });
         });
 
@@ -56,20 +80,18 @@ describe("Duration class", () => {
 
     describe('Config Options', () => {
         test('W/out Weeks', () => {
-            config.calculateWeeks = false;
-
             const { WEEK, DAY, HOUR, MIN, SEC } = Duration;
 
-            const input = WEEK * 6
+            const input = WEEK
                 + DAY * 5
                 + HOUR * 4
                 + MIN * 30
                 + SEC * 15;
 
-            const result = (new Duration(input, config)).toObject();
+            const result = (new Duration(input, { calculateWeeks: false })).toObject();
 
             expect(result).toMatchObject({
-                days: 7 * 6 + 5,
+                days: 12,
                 hours: 4,
                 minutes: 30,
                 seconds: 15,

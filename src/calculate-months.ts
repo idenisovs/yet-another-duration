@@ -1,41 +1,46 @@
-import Duration from './duration';
 import CalculateMonthsResult from './calculate-months-result';
 
+const DAY = 1000 * 60 * 60 * 24;
 const ODD_MONTH_DAYS = 31;
 const EVEN_MONTH_DAYS = 30;
 const FEBRUARY_DAYS = 28;
 const MARCH = 10;
+const ODD_MONTH_DAYS_MS = ODD_MONTH_DAYS * DAY;
 
 export default function calculateMonths(duration: number): CalculateMonthsResult {
-    const {MONTH, DAY} = Duration;
-
-    if (duration / MONTH < 1) {
+    if (duration < ODD_MONTH_DAYS_MS) {
         return {
             remaining: duration,
             months: 0
         };
     }
 
-    let remInDays = duration / DAY;
+    let remaining = duration;
+    let remInDays = Math.round(duration / DAY);
     let odd = true;
     let months = 0;
     let daysInNextMonth = ODD_MONTH_DAYS;
+    let currentMonthDays = 0;
 
     do {
         months++;
         odd = !odd;
-        remInDays -= daysInNextMonth;
-
-        if (months % MARCH === 0) {
-            daysInNextMonth = FEBRUARY_DAYS;
-        } else {
-            daysInNextMonth = odd ? ODD_MONTH_DAYS : EVEN_MONTH_DAYS;
-        }
-
+        currentMonthDays = daysInNextMonth;
+        remaining -= currentMonthDays * DAY;
+        remInDays -= currentMonthDays;
+        daysInNextMonth = getDaysInNextMonth(months, odd);
     } while (remInDays > daysInNextMonth);
 
     return {
         months: months,
-        remaining: remInDays * DAY
+        remaining: remaining
     };
+}
+
+function getDaysInNextMonth(months: number, odd: boolean): number {
+    if (months % MARCH === 0) {
+        return FEBRUARY_DAYS;
+    }
+
+    return odd ? ODD_MONTH_DAYS : EVEN_MONTH_DAYS;
 }

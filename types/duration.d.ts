@@ -6,7 +6,7 @@ export default class Duration {
     static readonly HOUR: number;
     static readonly DAY: number;
     static readonly WEEK: number;
-    static readonly MONTH: number;
+    static readonly YEAR: number;
     private readonly duration;
     private readonly config;
     constructor(duration: number, config: DurationConfig);

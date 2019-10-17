@@ -96,6 +96,58 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/calculate-months.ts":
+/*!*********************************!*\
+  !*** ./src/calculate-months.ts ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return calculateMonths; });
+var DAY = 1000 * 60 * 60 * 24;
+var ODD_MONTH_DAYS = 31;
+var EVEN_MONTH_DAYS = 30;
+var FEBRUARY_DAYS = 28;
+var MARCH = 10;
+var ODD_MONTH_DAYS_MS = ODD_MONTH_DAYS * DAY;
+function calculateMonths(duration) {
+    if (duration < ODD_MONTH_DAYS_MS) {
+        return {
+            remaining: duration,
+            months: 0
+        };
+    }
+    var remaining = duration;
+    var remInDays = Math.round(duration / DAY);
+    var odd = true;
+    var months = 0;
+    var daysInNextMonth = ODD_MONTH_DAYS;
+    var currentMonthDays = 0;
+    do {
+        months++;
+        odd = !odd;
+        currentMonthDays = daysInNextMonth;
+        remaining -= currentMonthDays * DAY;
+        remInDays -= currentMonthDays;
+        daysInNextMonth = getDaysInNextMonth(months, odd);
+    } while (remInDays > daysInNextMonth);
+    return {
+        months: months,
+        remaining: remaining
+    };
+}
+function getDaysInNextMonth(months, odd) {
+    if (months % MARCH === 0) {
+        return FEBRUARY_DAYS;
+    }
+    return odd ? ODD_MONTH_DAYS : EVEN_MONTH_DAYS;
+}
+
+
+/***/ }),
+
 /***/ "./src/duration.ts":
 /*!*************************!*\
   !*** ./src/duration.ts ***!
@@ -105,14 +157,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _calculate_months__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./calculate-months */ "./src/calculate-months.ts");
+
 var Duration = /** @class */ (function () {
     function Duration(duration, config) {
         this.duration = duration;
         this.config = config;
     }
     Duration.prototype.toObject = function () {
-        var WEEK = Duration.WEEK, DAY = Duration.DAY, HOUR = Duration.HOUR, MIN = Duration.MIN, SEC = Duration.SEC;
+        var YEAR = Duration.YEAR, WEEK = Duration.WEEK, DAY = Duration.DAY, HOUR = Duration.HOUR, MIN = Duration.MIN, SEC = Duration.SEC;
         var rem = this.duration;
+        var years = Math.floor(rem / YEAR);
+        rem -= years * YEAR;
+        var monthsObj = Object(_calculate_months__WEBPACK_IMPORTED_MODULE_0__["default"])(rem);
+        var months = monthsObj.months;
+        rem = monthsObj.remaining;
         var weeks = 0;
         if (this.config.calculateWeeks) {
             weeks = Math.floor(rem / WEEK);
@@ -126,18 +185,20 @@ var Duration = /** @class */ (function () {
         rem -= minutes * MIN;
         var seconds = Math.floor(rem / SEC);
         rem -= seconds * SEC;
-        var result = { days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: rem };
+        var milliseconds = rem;
         if (this.config.calculateWeeks) {
-            result.weeks = weeks;
+            return { years: years, months: months, weeks: weeks, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: milliseconds };
         }
-        return result;
+        else {
+            return { years: years, months: months, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: milliseconds };
+        }
     };
     Duration.SEC = 1000;
     Duration.MIN = Duration.SEC * 60;
     Duration.HOUR = Duration.MIN * 60;
     Duration.DAY = Duration.HOUR * 24;
     Duration.WEEK = Duration.DAY * 7;
-    Duration.MONTH = Duration.DAY * 31;
+    Duration.YEAR = Duration.DAY * 365;
     return Duration;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Duration);
