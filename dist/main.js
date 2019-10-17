@@ -106,7 +106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var Duration = /** @class */ (function () {
-    function Duration(duration) {
+    function Duration(duration, config) {
         this.duration = duration;
     }
     Duration.prototype.toObject = function () {
@@ -140,21 +140,29 @@ var Duration = /** @class */ (function () {
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
-/*! exports provided: duration, defaults */
+/*! exports provided: duration */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "duration", function() { return duration; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaults", function() { return defaults; });
 /* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
 
-function duration(value) {
-    return new _duration__WEBPACK_IMPORTED_MODULE_0__["default"](value);
+var DEFAULT_CONFIG = {};
+function duration(value, config) {
+    if (config === void 0) { config = DEFAULT_CONFIG; }
+    return new _duration__WEBPACK_IMPORTED_MODULE_0__["default"](value, config);
 }
-function defaults() {
-    return duration;
+duration.defaults = defaults;
+function defaults(defaultConfig) {
+    function bootstrappedDuration(value, config) {
+        if (config === void 0) { config = defaultConfig; }
+        return duration(value, config);
+    }
+    bootstrappedDuration.defaults = defaults;
+    return bootstrappedDuration;
 }
+;
 
 
 /***/ })

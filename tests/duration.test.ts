@@ -2,7 +2,7 @@ import Duration from '../src/duration';
 
 describe("Duration class", () => {
     test('toObject return object', () => {
-        const d = new Duration(65123);
+        const d = new Duration(65123, {});
         const result = d.toObject();
 
         expect(result).not.toBeNull();
@@ -22,7 +22,7 @@ describe("Duration class", () => {
             + MIN * 30
             + SEC * 15;
 
-        const output = (new Duration(input)).toObject();
+        const output = (new Duration(input, {})).toObject();
 
         expect(output).toMatchObject({
             weeks: 6,
@@ -35,7 +35,7 @@ describe("Duration class", () => {
     });
 
     test('Zero input', () => {
-        const output = (new Duration(0)).toObject();
+        const output = (new Duration(0, {})).toObject();
 
         expect(output).toMatchObject({
             weeks: 0,

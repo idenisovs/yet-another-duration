@@ -5,6 +5,8 @@
     "module": "es6",
     "target": "es5",
     "sourceMap": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationDir": "types"
   }
 }

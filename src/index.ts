@@ -1,9 +1,19 @@
 import Duration from './duration';
 
-export function duration(value: number): Duration {
-    return new Duration(value);
+const DEFAULT_CONFIG = {};
+
+export function duration(value: number, config = DEFAULT_CONFIG): Duration {
+    return new Duration(value, config);
 }
 
-export function defaults(): (value: number) => Duration {
-    return duration;
+duration.defaults = defaults;
+
+function defaults(defaultConfig: any) {
+    function bootstrappedDuration(value: number, config = defaultConfig) {
+        return duration(value, config);
+    }
+
+    bootstrappedDuration.defaults = defaults;
+
+    return bootstrappedDuration;
 }

@@ -8,8 +8,9 @@ export default class Duration {
     public static readonly WEEK = Duration.DAY * 7;
     
     private readonly duration: number;
+    private readonly config: any;
 
-    constructor(duration: number) {
+    constructor(duration: number, config: any) {
         this.duration = duration;
     }
 
