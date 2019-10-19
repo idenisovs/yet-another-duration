@@ -116,6 +116,12 @@ describe("Duration class", () => {
 
             expect(output).toBe('0y 0m 0d 0h 0m 59s');
         });
+
+        test('0y 5m 0d 0h 0m 0s', () => {
+            const input = (DAY * 31 + DAY * 30) * 2 + DAY * 31;
+            const output = (new Duration(input, longStrings)).toString();
+            expect(output).toBe('0y 5m 0d 0h 0m 0s');
+        });
     });
 
     describe('Config Options', () => {

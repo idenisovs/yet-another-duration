@@ -27,6 +27,12 @@ describe('calculateMonths(...)', () => {
         expect(actual.months).toBe(1);
     });
 
+    test('five months', () => {
+        const input = (DAY * 31 + DAY * 30) * 2 + DAY * 31;
+        const actual = calculateMonths(input);
+        expect(actual.months).toBe(5);
+    });
+
     test('11m 1d', () => {
         const input = (DAY * 31 + DAY * 30) * 5 + DAY * 28 + DAY;
         const actual = calculateMonths(input);

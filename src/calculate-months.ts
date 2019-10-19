@@ -29,7 +29,7 @@ export default function calculateMonths(duration: number): CalculateMonthsResult
         remaining -= currentMonthDays * DAY;
         remInDays -= currentMonthDays;
         daysInNextMonth = getDaysInNextMonth(months, odd);
-    } while (remInDays > daysInNextMonth);
+    } while (remInDays >= daysInNextMonth);
 
     return {
         months: months,
