@@ -2,7 +2,10 @@ import Duration from './duration';
 import DurationConfig from './duration-config';
 
 const DEFAULT_CONFIG: DurationConfig = {
-    calculateWeeks: false
+    calculateWeeks: false,
+    string: {
+        full: false
+    }
 };
 
 export function duration(value: number, config = DEFAULT_CONFIG): Duration {
