@@ -10,5 +10,6 @@ export default class Duration {
     private readonly duration;
     private readonly config;
     constructor(duration: number, config: DurationConfig);
+    toString(): string;
     toObject(): DurationObject;
 }

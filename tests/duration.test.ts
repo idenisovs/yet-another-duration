@@ -6,6 +6,8 @@ const config: DurationConfig = {
 };
 
 describe("Duration class", () => {
+    const { YEAR, WEEK, DAY, HOUR, MIN, SEC } = Duration;
+
     describe('toObject(...)', () => {
         test('toObject return object', () => {
             const d = new Duration(65123, config);
@@ -20,8 +22,6 @@ describe("Duration class", () => {
         });
 
         test('Duration input match duration output', () => {
-            const { WEEK, DAY, HOUR, MIN, SEC } = Duration;
-
             const input = WEEK * 3
                 + DAY * 5
                 + HOUR * 4
@@ -75,6 +75,37 @@ describe("Duration class", () => {
                 seconds: 0,
                 milliseconds: 0
             });
+        });
+    });
+
+    describe('toString(...)', () => {
+        test('2y 4m 12d 5h 31m 1s', () => {
+            const input = YEAR * 2
+                + ((DAY * 31 + DAY * 30) * 2)
+                + DAY * 12
+                + HOUR * 5
+                + MIN * 31
+                + SEC;
+
+            const output = (new Duration(input, {})).toString();
+
+            expect(output).toBe('2y 4m 12d 5h 31m 1s');
+        });
+
+        test('0y 0m 0d 2h 30m 0s', () => {
+            const input = MIN * 150;
+
+            const output = (new Duration(input, {})).toString();
+
+            expect(output).toBe('0y 0m 0d 2h 30m 0s');
+        });
+
+        test('0y 0m 0d 0h 0m 59s', () => {
+            const input = SEC * 59;
+
+            const output = (new Duration(input, {})).toString();
+
+            expect(output).toBe('0y 0m 0d 0h 0m 59s');
         });
     });
 

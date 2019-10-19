@@ -18,6 +18,26 @@ export default class Duration {
         this.config = config;
     }
 
+    toString() {
+        const obj = this.toObject();
+
+        const result: string[] = [];
+
+        result.push(`${obj.years}y`);
+        result.push(`${obj.months}m`);
+
+        if ('weeks' in obj) {
+            result.push(`${obj.weeks}w`);
+        }
+
+        result.push(`${obj.days}d`);
+        result.push(`${obj.hours}h`);
+        result.push(`${obj.minutes}m`);
+        result.push(`${obj.seconds}s`);
+
+        return result.join(' ');
+    }
+
     toObject(): DurationObject {
         const { YEAR, WEEK, DAY, HOUR, MIN, SEC } = Duration;
 

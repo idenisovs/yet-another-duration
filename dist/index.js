@@ -164,6 +164,20 @@ var Duration = /** @class */ (function () {
         this.duration = duration;
         this.config = config;
     }
+    Duration.prototype.toString = function () {
+        var obj = this.toObject();
+        var result = [];
+        result.push(obj.years + "y");
+        result.push(obj.months + "m");
+        if ('weeks' in obj) {
+            result.push(obj.weeks + "w");
+        }
+        result.push(obj.days + "d");
+        result.push(obj.hours + "h");
+        result.push(obj.minutes + "m");
+        result.push(obj.seconds + "s");
+        return result.join(' ');
+    };
     Duration.prototype.toObject = function () {
         var YEAR = Duration.YEAR, WEEK = Duration.WEEK, DAY = Duration.DAY, HOUR = Duration.HOUR, MIN = Duration.MIN, SEC = Duration.SEC;
         var rem = this.duration;
