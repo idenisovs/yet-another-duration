@@ -20,7 +20,7 @@ const {duration} = require('yet-another-duration');
 
 const result = duration(1649254321).toString();
 console.log(result);
-// 0y 0m 19d 2h 7m 34s
+// 19d 2h 7m 34s
 ```
   
 ### toObject()
@@ -40,7 +40,22 @@ console.log(r2);
 
 ## Options
 
-* `calculateWeeks: boolean (default = false)` - include weeks into calculations;
+```json
+{
+    "calculateWeeks": false,
+    "string": {
+        "trimZerosLeft": true,
+        "trimZerosRight": true,
+        "removeZeros": false
+    }
+}
+```
+
+* `calculateWeeks` - include weeks into calculations;
+* `trimZerosLeft`, `trimZerosRight` - remove zero values from left or right side of the string;
+  * When both options is `true`, then `toString()` will produce `2h 0m 30s` instead of `0y 0m 0d 2h 0m 30s`;
+* `removeZeros` - remove zero values from the string;
+  * When `removeZeros` option is `true`, then `toString()` will produce `2h 30s` instead of `0y 0m 0d 2h 0m 30s`;
 
 ## Examples
 

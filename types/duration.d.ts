@@ -9,6 +9,7 @@ export default class Duration {
     static readonly YEAR: number;
     private readonly duration;
     private readonly config;
+    private readonly units;
     constructor(duration: number, config: DurationConfig);
     toString(): string;
     toObject(): DurationObject;

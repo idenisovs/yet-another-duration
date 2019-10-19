@@ -1,6 +1,7 @@
 import DurationObject from './duration-object';
 import DurationConfig from './duration-config';
 import calculateMonths from './calculate-months';
+import cleanup from './cleanup';
 
 export default class Duration {
     public static readonly SEC = 1000;
@@ -29,8 +30,12 @@ export default class Duration {
 
         const result: string[] = [];
 
+        cleanup(this.units, obj, this.config.string);
+
         for (let unit of this.units) {
-            result.push(obj[unit as keyof DurationObject] + unit[0]);
+            const value = obj[unit as keyof DurationObject];
+
+            result.push(value + unit[0]);
         }
 
         return result.join(' ');
