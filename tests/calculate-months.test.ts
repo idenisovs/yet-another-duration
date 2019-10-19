@@ -45,6 +45,12 @@ describe('calculateMonths(...)', () => {
         expect(actual.months).toBe(1);
     });
 
+    test('364d', () => {
+        const input = DAY * 364;
+        const actual = calculateMonths(input);
+        expect(actual.months).toBe(11);
+    });
+
     test('Zero Case', () => {
         const actual = calculateMonths(0);
         expect(actual.months).toBe(0);

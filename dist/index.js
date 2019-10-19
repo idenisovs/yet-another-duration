@@ -112,6 +112,7 @@ var EVEN_MONTH_DAYS = 30;
 var FEBRUARY_DAYS = 28;
 var MARCH = 10;
 var ODD_MONTH_DAYS_MS = ODD_MONTH_DAYS * DAY;
+var days = [31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 28, 31];
 function calculateMonths(duration) {
     if (duration < ODD_MONTH_DAYS_MS) {
         return {
@@ -120,19 +121,20 @@ function calculateMonths(duration) {
         };
     }
     var remaining = duration;
-    var remInDays = Math.round(duration / DAY);
-    var odd = true;
+    var remInDays = Math.round(remaining / DAY);
     var months = 0;
-    var daysInNextMonth = ODD_MONTH_DAYS;
-    var currentMonthDays = 0;
+    var monthIdx = 0;
+    var daysInMonth = 0;
     do {
         months++;
-        odd = !odd;
-        currentMonthDays = daysInNextMonth;
-        remaining -= currentMonthDays * DAY;
-        remInDays -= currentMonthDays;
-        daysInNextMonth = getDaysInNextMonth(months, odd);
-    } while (remInDays >= daysInNextMonth);
+        daysInMonth = days[monthIdx];
+        remInDays -= daysInMonth;
+        remaining -= daysInMonth * DAY;
+        monthIdx++;
+        if (monthIdx > 11) {
+            monthIdx = 0;
+        }
+    } while (remInDays >= days[monthIdx]);
     return {
         months: months,
         remaining: remaining

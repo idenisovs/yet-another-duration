@@ -7,6 +7,8 @@ const FEBRUARY_DAYS = 28;
 const MARCH = 10;
 const ODD_MONTH_DAYS_MS = ODD_MONTH_DAYS * DAY;
 
+const days = [ 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 28, 31 ];
+
 export default function calculateMonths(duration: number): CalculateMonthsResult {
     if (duration < ODD_MONTH_DAYS_MS) {
         return {
@@ -16,20 +18,25 @@ export default function calculateMonths(duration: number): CalculateMonthsResult
     }
 
     let remaining = duration;
-    let remInDays = Math.round(duration / DAY);
-    let odd = true;
+    let remInDays = Math.round(remaining / DAY);
     let months = 0;
-    let daysInNextMonth = ODD_MONTH_DAYS;
-    let currentMonthDays = 0;
+    let monthIdx = 0;
+    let daysInMonth = 0;
 
     do {
         months++;
-        odd = !odd;
-        currentMonthDays = daysInNextMonth;
-        remaining -= currentMonthDays * DAY;
-        remInDays -= currentMonthDays;
-        daysInNextMonth = getDaysInNextMonth(months, odd);
-    } while (remInDays >= daysInNextMonth);
+
+        daysInMonth = days[monthIdx];
+
+        remInDays -= daysInMonth;
+        remaining -= daysInMonth * DAY;
+
+        monthIdx++;
+
+        if (monthIdx > 11) {
+            monthIdx = 0;
+        }
+    } while (remInDays >= days[monthIdx]);
 
     return {
         months: months,
