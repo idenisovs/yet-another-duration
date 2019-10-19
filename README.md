@@ -8,7 +8,26 @@ npm install yet-another-duration
 
 ## Usage
 
-* `duration(milliseconds: number, options?: object).toObject()` - transform the number of milliseconds into the _Duration_ object.
+### toString()
+
+Transform the number of milliseconds into the _Duration_ string.
+
+* `duration(milliseconds: number, options?: object).toString()`.
+  * `options` is optional param;
+
+```javascript
+const {duration} = require('yet-another-duration');
+
+const result = duration(1649254321).toString();
+console.log(result);
+// 0y 0m 19d 2h 7m 34s
+```
+  
+### toObject()
+
+Transform the number of milliseconds into the _Duration_ object.
+
+* `duration(milliseconds: number, options?: object).toObject();`
   * `options` is optional param;
 ```javascript
 const {duration} = require('yet-another-duration');
