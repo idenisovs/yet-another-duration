@@ -12,10 +12,16 @@ export default class Duration {
 
     private readonly duration: number;
     private readonly config: DurationConfig;
+    private readonly units: string[];
 
     constructor(duration: number, config: DurationConfig) {
         this.duration = duration;
         this.config = config;
+        this.units = [ 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds' ];
+
+        if (!this.config.calculateWeeks) {
+            this.units.splice(this.units.indexOf('weeks'), 1);
+        }
     }
 
     toString() {
@@ -23,17 +29,9 @@ export default class Duration {
 
         const result: string[] = [];
 
-        result.push(`${obj.years}y`);
-        result.push(`${obj.months}m`);
-
-        if ('weeks' in obj) {
-            result.push(`${obj.weeks}w`);
+        for (let unit of this.units) {
+            result.push(obj[unit as keyof DurationObject] + unit[0]);
         }
-
-        result.push(`${obj.days}d`);
-        result.push(`${obj.hours}h`);
-        result.push(`${obj.minutes}m`);
-        result.push(`${obj.seconds}s`);
 
         return result.join(' ');
     }
@@ -51,12 +49,8 @@ export default class Duration {
         const months = monthsObj.months;
         rem = monthsObj.remaining;
 
-        let weeks = 0;
-
-        if (this.config.calculateWeeks) {
-            weeks = Math.floor(rem / WEEK);
-            rem -= weeks * WEEK;
-        }
+        const weeks = Math.floor(rem / WEEK);
+        rem -= weeks * WEEK;
 
         const days = Math.floor(rem / DAY);
         rem -= days * DAY;
@@ -72,10 +66,15 @@ export default class Duration {
 
         const milliseconds = rem;
 
-        if (this.config.calculateWeeks) {
-            return { years, months, weeks, days, hours, minutes, seconds, milliseconds };
-        } else {
-            return { years, months, days, hours, minutes, seconds, milliseconds };
+        const result: DurationObject = {
+            years, months, weeks, days, hours, minutes, seconds, milliseconds
+        };
+
+        if (!this.config.calculateWeeks) {
+            result.days += result.weeks * 7;
+            delete result.weeks;
         }
+
+        return result;
     }
 }
