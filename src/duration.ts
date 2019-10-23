@@ -23,6 +23,16 @@ export default class Duration {
         if (!this.config.calculateWeeks) {
             this.units.splice(this.units.indexOf('weeks'), 1);
         }
+
+        const {units} = this.config;
+
+        if (units && units.max) {
+            const idx = this.units.indexOf(this.config.units.max);
+
+            if (idx > 0) {
+                this.units.splice(0, idx);
+            }
+        }
     }
 
     toString() {
@@ -44,30 +54,45 @@ export default class Duration {
     toObject(): DurationObject {
         const { YEAR, WEEK, DAY, HOUR, MIN, SEC } = Duration;
 
+        let years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
+
         let rem = this.duration;
 
-        const years = Math.floor(rem / YEAR);
-        rem -= years * YEAR;
+        if (this.units.indexOf('years') > -1) {
+            years = Math.floor(rem / YEAR);
+            rem -= years * YEAR;
+        }
 
-        const monthsObj = calculateMonths(rem);
+        if (this.units.indexOf('months') > -1) {
+            const monthsObj = calculateMonths(rem);
+            months = monthsObj.months;
+            rem = monthsObj.remaining;
+        }
 
-        const months = monthsObj.months;
-        rem = monthsObj.remaining;
+        if (this.units.indexOf('weeks') > -1) {
+            weeks = Math.floor(rem / WEEK);
+            rem -= weeks * WEEK;
+        }
 
-        const weeks = Math.floor(rem / WEEK);
-        rem -= weeks * WEEK;
+        if (this.units.indexOf('days') > -1) {
+            days = Math.floor(rem / DAY);
+            rem -= days * DAY;
+        }
 
-        const days = Math.floor(rem / DAY);
-        rem -= days * DAY;
+        if (this.units.indexOf('hours') > -1) {
+            hours = Math.floor(rem / HOUR);
+            rem -= hours * HOUR;
+        }
 
-        const hours = Math.floor(rem / HOUR);
-        rem -= hours * HOUR;
+        if (this.units.indexOf('minutes') > -1) {
+            minutes = Math.floor(rem / MIN);
+            rem -= minutes * MIN;
+        }
 
-        const minutes = Math.floor(rem / MIN);
-        rem -= minutes * MIN;
-
-        const seconds = Math.floor(rem / SEC);
-        rem -= seconds * SEC;
+        if (this.units.indexOf('seconds') > -1) {
+            seconds = Math.floor(rem / SEC);
+            rem -= seconds * SEC;
+        }
 
         const milliseconds = rem;
 

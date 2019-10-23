@@ -207,5 +207,54 @@ describe("Duration class", () => {
 
             expect(result).toBe('2h 30s');
         });
+
+        test('Max unit = days', () => {
+            const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                units: {
+                    max: 'days'
+                }
+            });
+
+            const input = HOUR * 1500 + MIN * 35 + SEC * 25;
+
+            const result = (new Duration(input, maxUnitsConfig)).toString();
+
+            expect(result).toBe('62d 12h 35m 25s');
+        });
+
+        test('Max unit = years', () => {
+            const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                units: {
+                    max: 'years'
+                }
+            });
+
+            const input = YEAR
+                + ((DAY * 31 + DAY * 30) * 2)
+                + DAY * 12
+                + HOUR * 5
+                + MIN * 31
+                + SEC;
+
+            const output = (new Duration(input, maxUnitsConfig)).toString();
+
+            expect(output).toBe('1y 4m 12d 5h 31m 1s');
+        });
+
+        test('Max unit = seconds', () => {
+            const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                units: {
+                    max: 'seconds'
+                }
+            });
+
+           const input = HOUR * 2 + MIN * 35 + SEC * 25;
+
+           const result = (new Duration(input, maxUnitsConfig)).toString();
+
+           const expected = `${input/1000}s`;
+
+           expect(result).toBe(expected);
+        });
     });
 });
