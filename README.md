@@ -40,20 +40,41 @@ console.log(r2); // { years: 0, months: 0, days: 19 ... }
 
 ## Options
 
-```json
-{
-    "calculateWeeks": false,
-    "string": {
-        "trimZerosLeft": true,
-        "trimZerosRight": true,
-        "removeZeros": false
-    }
+```typescript
+interface DurationConfig {
+    calculateWeeks?: boolean;
+    units?: {
+        max?: string,
+        min?: string
+    };
+    string?: {
+        trimZerosLeft?: boolean;
+        trimZerosRight?: boolean;
+        removeZeros?: boolean;
+    };
 }
 ```
 
-* `calculateWeeks` - include weeks into calculations;
-* `trimZerosLeft`, `trimZerosRight` - remove zero values from left or right side of the string;
-  * When both options is `true`, then `toString()` will produce `2h 0m 30s` instead of `0y 0m 0d 2h 0m 30s`;
+* `calculateWeeks` `true|false` - include weeks into calculations;
+
+### units options
+
+* `max` `years|months|weeks|days|hours|minutes|seconds` - set max unit for output:
+  * If set to `hours`, then `1m 15d 12h 32m 45s` -> `1116h 32m 45s`;
+* `min` `years|months|weeks|days|hours|minutes|seconds` - set min unit for output:
+  * If set to `days`, then `1m 15d 12h 32m 45s` -> `1m 15d`;
+
+Both options may be provided together. As example: 
+  * If max is set to `days`, min is set to `hours`: `1m 15d 12h 32m 45s` -> `46d 12h`;
+
+
+### string options
+
+* `trimZerosLeft` `true|false` - remove zero values from left side of the string:
+  * If true, then `0y 0m 0d 2h 0m 30s` -> `2h 0m 30s`;
+* `trimZerosRight` `true|false` - remove zero values from right side of the string:
+  * If true, then `0y 0m 5d 12h 0m 0s` -> `0y 0m 5d 12h`;
+  * If both options is set `true`, then `toString()` will produce `5d 12h` instead of `0y 0m 5d 12h 0m 0s`;
 * `removeZeros` - remove zero values from the string;
   * When `removeZeros` option is `true`, then `toString()` will produce `2h 30s` instead of `0y 0m 0d 2h 0m 30s`;
 
