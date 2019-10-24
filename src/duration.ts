@@ -20,19 +20,8 @@ export default class Duration {
         this.config = config;
         this.units = [ 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds' ];
 
-        if (!this.config.calculateWeeks) {
-            this.units.splice(this.units.indexOf('weeks'), 1);
-        }
-
-        const {units} = this.config;
-
-        if (units && units.max) {
-            const idx = this.units.indexOf(this.config.units.max);
-
-            if (idx > 0) {
-                this.units.splice(0, idx);
-            }
-        }
+        this.processWeeksOption();
+        this.processUnitsOption();
     }
 
     toString() {
@@ -106,5 +95,35 @@ export default class Duration {
         }
 
         return result;
+    }
+
+    processWeeksOption() {
+        if (!this.config.calculateWeeks) {
+            this.units.splice(this.units.indexOf('weeks'), 1);
+        }
+    }
+
+    processUnitsOption() {
+        const { units } = this.config;
+
+        if (!units) {
+            return;
+        }
+
+        if (units.max) {
+            const idx = this.units.indexOf(this.config.units.max);
+
+            if (idx > 0) {
+                this.units.splice(0, idx);
+            }
+        }
+
+        if (units.min) {
+            const idx = this.units.indexOf(this.config.units.min);
+
+            if (idx > 0) {
+                this.units.splice(idx + 1)
+            }
+        }
     }
 }

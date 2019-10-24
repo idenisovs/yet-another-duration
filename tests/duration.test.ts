@@ -133,128 +133,192 @@ describe("Duration class", () => {
     describe('Config Options', () => {
         const { WEEK, DAY, HOUR, MIN, SEC } = Duration;
 
-        test('calculateWeeks = false', () => {
-            const input = WEEK
-                + DAY * 5
-                + HOUR * 4
-                + MIN * 30
-                + SEC * 15;
+        describe('Weeks options', () => {
+            test('calculateWeeks = false', () => {
+                const input = WEEK
+                    + DAY * 5
+                    + HOUR * 4
+                    + MIN * 30
+                    + SEC * 15;
 
-            const result = (new Duration(input, { calculateWeeks: false })).toObject();
+                const result = (new Duration(input, { calculateWeeks: false })).toObject();
 
-            expect(result).toMatchObject({
-                days: 12,
-                hours: 4,
-                minutes: 30,
-                seconds: 15,
-                milliseconds: 0
+                expect(result).toMatchObject({
+                    days: 12,
+                    hours: 4,
+                    minutes: 30,
+                    seconds: 15,
+                    milliseconds: 0
+                });
+
+                expect(result).not.toHaveProperty('weeks');
+            });
+        });
+
+        describe('String option', () => {
+            test('trimZerosLeft = true', () => {
+                const trimZerosLeft = Object.assign({}, DEFAULT_CONFIG, { string: { trimZerosLeft: true } });
+
+                const input = DAY * 5
+                    + HOUR * 4
+                    + MIN * 30;
+
+                const result = (new Duration(input, trimZerosLeft)).toString();
+
+                expect(result).toBe('5d 4h 30m 0s');
             });
 
-            expect(result).not.toHaveProperty('weeks');
-        });
+            test('trimZerosRight = true', () => {
+                const trimZerosLeft = Object.assign({}, DEFAULT_CONFIG, { string: { trimZerosRight: true } });
 
-        test('trimZerosLeft = true', () => {
-            const trimZerosLeft = Object.assign({}, DEFAULT_CONFIG, { string: { trimZerosLeft: true } });
+                const input = DAY * 5
+                    + HOUR * 4;
 
-            const input = DAY * 5
-                + HOUR * 4
-                + MIN * 30;
+                const result = (new Duration(input, trimZerosLeft)).toString();
 
-            const result = (new Duration(input, trimZerosLeft)).toString();
-
-            expect(result).toBe('5d 4h 30m 0s');
-        });
-
-        test('trimZerosRight = true', () => {
-            const trimZerosLeft = Object.assign({}, DEFAULT_CONFIG, { string: { trimZerosRight: true } });
-
-            const input = DAY * 5
-                + HOUR * 4;
-
-            const result = (new Duration(input, trimZerosLeft)).toString();
-
-            expect(result).toBe('0y 0m 5d 4h');
-        });
-
-        test('trimZerosLef, trimZerosRight', () => {
-            const trimZerosLeft = Object.assign({}, DEFAULT_CONFIG, { string: { trimZerosLeft: true, trimZerosRight: true } });
-
-            const input = DAY * 5
-                + HOUR * 4;
-
-            const result = (new Duration(input, trimZerosLeft)).toString();
-
-            expect(result).toBe('5d 4h');
-        });
-
-        test('Default config for zeros trimming', () => {
-            const input = DAY * 5
-                + HOUR * 4;
-
-            const result = (new Duration(input, DEFAULT_CONFIG)).toString();
-
-            expect(result).toBe('5d 4h');
-        });
-
-        test('removeZeros = true', () => {
-            const removeZerosConfig = Object.assign({}, DEFAULT_CONFIG, {
-                string: { removeZeros: true, trimZerosLeft: false, trimZerosRight: false }
+                expect(result).toBe('0y 0m 5d 4h');
             });
 
-            const input = HOUR * 2 + SEC * 30;
+            test('trimZerosLef, trimZerosRight', () => {
+                const trimZerosLeft = Object.assign({}, DEFAULT_CONFIG, { string: { trimZerosLeft: true, trimZerosRight: true } });
 
-            const result = (new Duration(input, removeZerosConfig)).toString();
+                const input = DAY * 5
+                    + HOUR * 4;
 
-            expect(result).toBe('2h 30s');
-        });
+                const result = (new Duration(input, trimZerosLeft)).toString();
 
-        test('Max unit = days', () => {
-            const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
-                units: {
-                    max: 'days'
-                }
+                expect(result).toBe('5d 4h');
             });
 
-            const input = HOUR * 1500 + MIN * 35 + SEC * 25;
+            test('Default config for zeros trimming', () => {
+                const input = DAY * 5
+                    + HOUR * 4;
 
-            const result = (new Duration(input, maxUnitsConfig)).toString();
+                const result = (new Duration(input, DEFAULT_CONFIG)).toString();
 
-            expect(result).toBe('62d 12h 35m 25s');
-        });
-
-        test('Max unit = years', () => {
-            const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
-                units: {
-                    max: 'years'
-                }
+                expect(result).toBe('5d 4h');
             });
 
-            const input = YEAR
-                + ((DAY * 31 + DAY * 30) * 2)
-                + DAY * 12
-                + HOUR * 5
-                + MIN * 31
-                + SEC;
+            test('removeZeros = true', () => {
+                const removeZerosConfig = Object.assign({}, DEFAULT_CONFIG, {
+                    string: { removeZeros: true, trimZerosLeft: false, trimZerosRight: false }
+                });
 
-            const output = (new Duration(input, maxUnitsConfig)).toString();
+                const input = HOUR * 2 + SEC * 30;
 
-            expect(output).toBe('1y 4m 12d 5h 31m 1s');
+                const result = (new Duration(input, removeZerosConfig)).toString();
+
+                expect(result).toBe('2h 30s');
+            });
         });
 
-        test('Max unit = seconds', () => {
-            const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
-                units: {
-                    max: 'seconds'
-                }
+        describe('Units option', () => {
+            test('Max unit = days', () => {
+                const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                    units: {
+                        max: 'days'
+                    }
+                });
+
+                const input = HOUR * 1500 + MIN * 35 + SEC * 25;
+
+                const result = (new Duration(input, maxUnitsConfig)).toString();
+
+                expect(result).toBe('62d 12h 35m 25s');
             });
 
-           const input = HOUR * 2 + MIN * 35 + SEC * 25;
+            test('Max unit = years', () => {
+                const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                    units: {
+                        max: 'years'
+                    }
+                });
 
-           const result = (new Duration(input, maxUnitsConfig)).toString();
+                const input = YEAR
+                    + ((DAY * 31 + DAY * 30) * 2)
+                    + DAY * 12
+                    + HOUR * 5
+                    + MIN * 31
+                    + SEC;
 
-           const expected = `${input/1000}s`;
+                const output = (new Duration(input, maxUnitsConfig)).toString();
 
-           expect(result).toBe(expected);
+                expect(output).toBe('1y 4m 12d 5h 31m 1s');
+            });
+
+            test('Max unit = seconds', () => {
+                const maxUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                    units: {
+                        max: 'seconds'
+                    }
+                });
+
+                const input = HOUR * 2 + MIN * 35 + SEC * 25;
+
+                const result = (new Duration(input, maxUnitsConfig)).toString();
+
+                const expected = `${input/1000}s`;
+
+                expect(result).toBe(expected);
+            });
+
+            test('Min unit = days', () => {
+                const minUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                    units: {
+                        min: 'days'
+                    }
+                });
+
+                const input = YEAR + DAY * 168 + HOUR * 12 + MIN * 35 + SEC * 25;
+
+                const result = (new Duration(input, minUnitsConfig)).toString();
+
+                expect(result).toBe('1y 5m 15d');
+            });
+
+            test('Min unit = hours', () => {
+                const minUnitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                    units: {
+                        min: 'hours'
+                    }
+                });
+
+                const input = SEC * 90000;
+
+                const result = (new Duration(input, minUnitsConfig)).toString();
+
+                expect(result).toBe('1d 1h');
+            });
+
+            test('Min & Max units', () => {
+                const unitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                    units: {
+                        min: 'hours',
+                        max: 'hours'
+                    }
+                });
+
+                const input = SEC * 90000;
+
+                const result = (new Duration(input, unitsConfig)).toString();
+
+                expect(result).toBe('25h');
+            });
+
+            test('Units overlaps', () => {
+                const unitsConfig = Object.assign({}, DEFAULT_CONFIG, {
+                    units: {
+                        min: 'months',
+                        max: 'hours'
+                    }
+                });
+
+                const input = DAY * 135;
+
+                const result = (new Duration(input, unitsConfig)).toString();
+
+                expect(result).toBe('3240h');
+            });
         });
     });
 });
