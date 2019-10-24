@@ -1,16 +1,20 @@
 import DurationObject from './duration-object';
-import StringConfig from './string-config';
+import DurationConfig from './duration-config';
 
-export default function cleanup(units: string[], duration: DurationObject, config: StringConfig) {
-    if (config.removeZeros) {
+export default function cleanup(units: string[], duration: DurationObject, config: DurationConfig) {
+    if (!config.string) {
+        return;
+    }
+
+    if (config.string.removeZeros) {
         return removeZeros(units, duration);
     }
 
-    if (config.trimZerosLeft) {
+    if (config.string.trimZerosLeft) {
         trimZerosLeft(units, duration);
     }
 
-    if (config.trimZerosRight) {
+    if (config.string.trimZerosRight) {
         trimZerosRight(units, duration);
     }
 }

@@ -1,3 +1,3 @@
 import DurationObject from './duration-object';
-import StringConfig from './string-config';
-export default function cleanup(units: string[], duration: DurationObject, config: StringConfig): void;
+import DurationConfig from './duration-config';
+export default function cleanup(units: string[], duration: DurationObject, config: DurationConfig): void;

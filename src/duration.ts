@@ -29,7 +29,7 @@ export default class Duration {
 
         const result: string[] = [];
 
-        cleanup(this.units, obj, this.config.string);
+        cleanup(this.units, obj, this.config);
 
         for (let unit of this.units) {
             const value = obj[unit as keyof DurationObject];

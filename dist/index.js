@@ -161,13 +161,16 @@ function getDaysInNextMonth(months, odd) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return cleanup; });
 function cleanup(units, duration, config) {
-    if (config.removeZeros) {
+    if (!config.string) {
+        return;
+    }
+    if (config.string.removeZeros) {
         return removeZeros(units, duration);
     }
-    if (config.trimZerosLeft) {
+    if (config.string.trimZerosLeft) {
         trimZerosLeft(units, duration);
     }
-    if (config.trimZerosRight) {
+    if (config.string.trimZerosRight) {
         trimZerosRight(units, duration);
     }
 }
@@ -223,14 +226,13 @@ var Duration = /** @class */ (function () {
         this.duration = duration;
         this.config = config;
         this.units = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
-        if (!this.config.calculateWeeks) {
-            this.units.splice(this.units.indexOf('weeks'), 1);
-        }
+        this.processWeeksOption();
+        this.processUnitsOption();
     }
     Duration.prototype.toString = function () {
         var obj = this.toObject();
         var result = [];
-        Object(_cleanup__WEBPACK_IMPORTED_MODULE_1__["default"])(this.units, obj, this.config.string);
+        Object(_cleanup__WEBPACK_IMPORTED_MODULE_1__["default"])(this.units, obj, this.config);
         for (var _i = 0, _a = this.units; _i < _a.length; _i++) {
             var unit = _a[_i];
             var value = obj[unit];
@@ -240,22 +242,37 @@ var Duration = /** @class */ (function () {
     };
     Duration.prototype.toObject = function () {
         var YEAR = Duration.YEAR, WEEK = Duration.WEEK, DAY = Duration.DAY, HOUR = Duration.HOUR, MIN = Duration.MIN, SEC = Duration.SEC;
+        var years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
         var rem = this.duration;
-        var years = Math.floor(rem / YEAR);
-        rem -= years * YEAR;
-        var monthsObj = Object(_calculate_months__WEBPACK_IMPORTED_MODULE_0__["default"])(rem);
-        var months = monthsObj.months;
-        rem = monthsObj.remaining;
-        var weeks = Math.floor(rem / WEEK);
-        rem -= weeks * WEEK;
-        var days = Math.floor(rem / DAY);
-        rem -= days * DAY;
-        var hours = Math.floor(rem / HOUR);
-        rem -= hours * HOUR;
-        var minutes = Math.floor(rem / MIN);
-        rem -= minutes * MIN;
-        var seconds = Math.floor(rem / SEC);
-        rem -= seconds * SEC;
+        if (this.units.indexOf('years') > -1) {
+            years = Math.floor(rem / YEAR);
+            rem -= years * YEAR;
+        }
+        if (this.units.indexOf('months') > -1) {
+            var monthsObj = Object(_calculate_months__WEBPACK_IMPORTED_MODULE_0__["default"])(rem);
+            months = monthsObj.months;
+            rem = monthsObj.remaining;
+        }
+        if (this.units.indexOf('weeks') > -1) {
+            weeks = Math.floor(rem / WEEK);
+            rem -= weeks * WEEK;
+        }
+        if (this.units.indexOf('days') > -1) {
+            days = Math.floor(rem / DAY);
+            rem -= days * DAY;
+        }
+        if (this.units.indexOf('hours') > -1) {
+            hours = Math.floor(rem / HOUR);
+            rem -= hours * HOUR;
+        }
+        if (this.units.indexOf('minutes') > -1) {
+            minutes = Math.floor(rem / MIN);
+            rem -= minutes * MIN;
+        }
+        if (this.units.indexOf('seconds') > -1) {
+            seconds = Math.floor(rem / SEC);
+            rem -= seconds * SEC;
+        }
         var milliseconds = rem;
         var result = {
             years: years, months: months, weeks: weeks, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: milliseconds
@@ -265,6 +282,29 @@ var Duration = /** @class */ (function () {
             delete result.weeks;
         }
         return result;
+    };
+    Duration.prototype.processWeeksOption = function () {
+        if (!this.config.calculateWeeks) {
+            this.units.splice(this.units.indexOf('weeks'), 1);
+        }
+    };
+    Duration.prototype.processUnitsOption = function () {
+        var units = this.config.units;
+        if (!units) {
+            return;
+        }
+        if (units.max) {
+            var idx = this.units.indexOf(this.config.units.max);
+            if (idx > 0) {
+                this.units.splice(0, idx);
+            }
+        }
+        if (units.min) {
+            var idx = this.units.indexOf(this.config.units.min);
+            if (idx > 0) {
+                this.units.splice(idx + 1);
+            }
+        }
     };
     Duration.SEC = 1000;
     Duration.MIN = Duration.SEC * 60;

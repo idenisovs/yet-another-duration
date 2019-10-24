@@ -13,4 +13,6 @@ export default class Duration {
     constructor(duration: number, config: DurationConfig);
     toString(): string;
     toObject(): DurationObject;
+    processWeeksOption(): void;
+    processUnitsOption(): void;
 }
