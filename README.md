@@ -34,6 +34,18 @@ const result = duration(131695000).toTimeSpan();
 
 console.log(result); // 01:12:34:55
 ```
+
+### toISO8601()
+
+Transform the number of milliseconds into the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string, eq. `P1Y2M10DT2H30M`.
+
+```javascript
+const {duration} = require('yet-another-duration');
+
+const result = duration(131695000).toTimeSpan();
+
+console.log(result); // P0Y0M1DT12H34M55S
+```
   
 ### toObject()
 
