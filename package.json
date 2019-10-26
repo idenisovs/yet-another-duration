@@ -1,6 +1,6 @@
 {
   "name": "yet-another-duration",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "This library helps to convert millisecond to duration string.",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
