@@ -1,5 +1,5 @@
-import Duration from './duration';
 import DurationConfig from './duration-config';
+import Duration from './duration/index';
 
 const DEFAULT_CONFIG: DurationConfig = {
     calculateWeeks: false,

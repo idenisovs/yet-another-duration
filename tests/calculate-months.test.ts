@@ -1,4 +1,4 @@
-import calculateMonths from '../src/calculate-months';
+import calculateMonths from '../src/duration/calculate-months';
 
 const DAY = 24 * 60 * 60 * 1000;
 
