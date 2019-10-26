@@ -131,10 +131,8 @@ describe("Duration class", () => {
     });
 
     describe('toTimeSpan(...)', () => {
-        test('12h 34m 55s => 00:00:00:12:34:55', () => {
+        test('1d 12h 34m 55s => 00:00:01:12:34:55', () => {
             const input = DAY + HOUR * 12 + MIN * 34 + SEC * 55;
-
-            console.log(input);
 
             const output = (new Duration(input, {})).toTimeSpan();
 
@@ -169,6 +167,32 @@ describe("Duration class", () => {
             const output = (new Duration(input, config)).toTimeSpan();
 
             expect(output).toBe('244:00:00:00');
+        });
+    });
+
+    describe('ISO 8601(...)', () => {
+        test('1d 12h 34m 55s => P0Y0M1DT12H34M55S', () => {
+            const input = DAY + HOUR * 12 + MIN * 34 + SEC * 55;
+
+            const output = (new Duration(input, {})).toISO8601();
+
+            expect(output).toBe('P0Y0M1DT12H34M55S');
+        });
+
+        test('1h 1m 1s => P0Y0M0DT1H1M1S', () => {
+            const input = HOUR + MIN + SEC;
+
+            const output = (new Duration(input, {})).toISO8601();
+
+            expect(output).toBe('P0Y0M0DT1H1M1S');
+        });
+
+        test('86400s => P0Y0M1DT0H0M0S', () => {
+            const input = SEC * 86400;
+
+            const output = (new Duration(input, {})).toISO8601();
+
+            expect(output).toBe('P0Y0M1DT0H0M0S');
         });
     });
 

@@ -13,18 +13,19 @@ export default class Duration {
 
     private readonly duration: number;
     private readonly config: DurationConfig;
-    private readonly units: string[];
+    private units: string[];
 
     constructor(duration: number, config: DurationConfig) {
         this.duration = duration;
         this.config = config;
-        this.units = [ 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds' ];
-
-        this.processWeeksOption();
-        this.processUnitsOption();
     }
 
     toString(): string {
+        this.units = this.getUnitList();
+
+        this.processWeeksOption();
+        this.processUnitsOption();
+
         const obj = this.toObject();
 
         trimZeros(this.units, obj, this.config);
@@ -41,6 +42,11 @@ export default class Duration {
     }
 
     toTimeSpan(): string {
+        this.units = this.getUnitList();
+
+        this.processWeeksOption();
+        this.processUnitsOption();
+
         const obj = this.toObject();
 
         const result: string[] = [];
@@ -58,7 +64,34 @@ export default class Duration {
         return result.join(':');
     }
 
+    toISO8601() {
+        this.units = this.getUnitList();
+
+        this.units.splice(this.units.indexOf('weeks'), 1);
+
+        const obj = this.toObject();
+
+        const result: string[] = [];
+
+        result.push('P');
+
+        for (let unit of this.units) {
+            const value = obj[unit as keyof DurationObject];
+            const item = value.toString() + unit[0].toUpperCase();
+            result.push(item);
+            if(unit === 'days') {
+                result.push('T');
+            }
+        }
+
+        return result.join('');
+    }
+
     toObject(): DurationObject {
+        if (!this.units) {
+            this.units = this.getUnitList();
+        }
+
         const { YEAR, WEEK, DAY, HOUR, MIN, SEC } = Duration;
 
         let years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
@@ -143,5 +176,9 @@ export default class Duration {
                 this.units.splice(idx + 1)
             }
         }
+    }
+
+    private getUnitList() {
+        return [ 'years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds' ];
     }
 }
