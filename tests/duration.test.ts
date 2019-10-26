@@ -130,6 +130,48 @@ describe("Duration class", () => {
         });
     });
 
+    describe('toTimeSpan(...)', () => {
+        test('12h 34m 55s => 00:00:00:12:34:55', () => {
+            const input = DAY + HOUR * 12 + MIN * 34 + SEC * 55;
+
+            console.log(input);
+
+            const output = (new Duration(input, {})).toTimeSpan();
+
+            expect(output).toBe('00:00:01:12:34:55');
+        });
+
+        test('1h 1m 1s => 00:00:00:01:01:01', () => {
+            const input = HOUR + MIN + SEC;
+
+            const output = (new Duration(input, {})).toTimeSpan();
+
+            expect(output).toBe('00:00:00:01:01:01');
+        });
+
+        test('86400s => 00:00:01:00:00:00', () => {
+            const input = SEC * 86400;
+
+            const output = (new Duration(input, {})).toTimeSpan();
+
+            expect(output).toBe('00:00:01:00:00:00');
+        });
+
+        test('With max unit option', () => {
+            const config = {
+                units: {
+                    max: 'days'
+                }
+            };
+
+            const input = 351360 * MIN;
+
+            const output = (new Duration(input, config)).toTimeSpan();
+
+            expect(output).toBe('244:00:00:00');
+        });
+    });
+
     describe('Config Options', () => {
         const { WEEK, DAY, HOUR, MIN, SEC } = Duration;
 

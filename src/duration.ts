@@ -1,7 +1,7 @@
 import DurationObject from './duration-object';
 import DurationConfig from './duration-config';
 import calculateMonths from './calculate-months';
-import cleanup from './cleanup';
+import trimZeros from './trim-zero-values';
 
 export default class Duration {
     public static readonly SEC = 1000;
@@ -24,12 +24,12 @@ export default class Duration {
         this.processUnitsOption();
     }
 
-    toString() {
+    toString(): string {
         const obj = this.toObject();
 
-        const result: string[] = [];
+        trimZeros(this.units, obj, this.config);
 
-        cleanup(this.units, obj, this.config);
+        const result: string[] = [];
 
         for (let unit of this.units) {
             const value = obj[unit as keyof DurationObject];
@@ -38,6 +38,24 @@ export default class Duration {
         }
 
         return result.join(' ');
+    }
+
+    toTimeSpan(): string {
+        const obj = this.toObject();
+
+        const result: string[] = [];
+
+        for (let unit of this.units) {
+            const value = obj[unit as keyof DurationObject];
+
+            if (value < 10) {
+                result.push('0' + value.toString());
+            } else {
+                result.push(value.toString());
+            }
+        }
+
+        return result.join(':');
     }
 
     toObject(): DurationObject {
@@ -97,13 +115,13 @@ export default class Duration {
         return result;
     }
 
-    processWeeksOption() {
+    private processWeeksOption() {
         if (!this.config.calculateWeeks) {
             this.units.splice(this.units.indexOf('weeks'), 1);
         }
     }
 
-    processUnitsOption() {
+    private processUnitsOption() {
         const { units } = this.config;
 
         if (!units) {

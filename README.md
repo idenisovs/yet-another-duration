@@ -22,6 +22,18 @@ const result = duration(1649254321).toString();
 
 console.log(result); // 19d 2h 7m 34s
 ```
+
+### toTimeSpan()
+
+Transform the number of milliseconds into the _Timespan_ string, eq. `01:12:34:55`.
+
+```javascript
+const {duration} = require('yet-another-duration');
+
+const result = duration(131695000).toTimeSpan();
+
+console.log(result); // 01:12:34:55
+```
   
 ### toObject()
 
