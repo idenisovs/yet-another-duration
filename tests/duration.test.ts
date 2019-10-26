@@ -1,7 +1,7 @@
-import Duration from '../src/duration';
-import DurationConfig from '../src/duration-config';
+import Duration from '../src/duration/index';
+import DurationOptions from '../src/duration-options';
 
-const DEFAULT_CONFIG: DurationConfig = {
+const DEFAULT_CONFIG: DurationOptions = {
     calculateWeeks: false,
     string: {
         trimZerosLeft: true,
@@ -15,7 +15,7 @@ describe("Duration class", () => {
 
     describe('toObject(...)', () => {
         test('toObject return object', () => {
-            const d = new Duration(65123, DEFAULT_CONFIG);
+            const d = new Duration(MIN + 5 * SEC + 123, DEFAULT_CONFIG);
             const result = d.toObject();
 
             expect(result).not.toBeNull();
@@ -156,15 +156,13 @@ describe("Duration class", () => {
         });
 
         test('With max unit option', () => {
-            const config = {
-                units: {
-                    max: 'days'
-                }
-            };
+            const options = Object.assign({}, DEFAULT_CONFIG, {
+                units: { max: 'days' }
+            });
 
             const input = 351360 * MIN;
 
-            const output = (new Duration(input, config)).toTimeSpan();
+            const output = (new Duration(input, options)).toTimeSpan();
 
             expect(output).toBe('244:00:00:00');
         });

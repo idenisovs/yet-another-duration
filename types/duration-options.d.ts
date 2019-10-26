@@ -1,8 +1,8 @@
-export default interface DurationConfig {
+export default interface DurationOptions {
     calculateWeeks?: boolean;
     units?: {
-        max?: string,
-        min?: string
+        max?: string;
+        min?: string;
     };
     string?: {
         trimZerosLeft?: boolean;
