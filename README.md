@@ -42,7 +42,7 @@ Transform the number of milliseconds into the [ISO 8601](https://en.wikipedia.or
 ```javascript
 const {duration} = require('yet-another-duration');
 
-const result = duration(131695000).toTimeSpan();
+const result = duration(131695000).toISO8601();
 
 console.log(result); // P0Y0M1DT12H34M55S
 ```
