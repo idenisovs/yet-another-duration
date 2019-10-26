@@ -9,10 +9,13 @@ export default class Duration {
     static readonly YEAR: number;
     private readonly duration;
     private readonly config;
-    private readonly units;
+    private units;
     constructor(duration: number, config: DurationConfig);
     toString(): string;
+    toTimeSpan(): string;
+    toISO8601(): string;
     toObject(): DurationObject;
-    processWeeksOption(): void;
-    processUnitsOption(): void;
+    private processWeeksOption;
+    private processUnitsOption;
+    private getUnitList;
 }

@@ -150,64 +150,6 @@ function getDaysInNextMonth(months, odd) {
 
 /***/ }),
 
-/***/ "./src/cleanup.ts":
-/*!************************!*\
-  !*** ./src/cleanup.ts ***!
-  \************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return cleanup; });
-function cleanup(units, duration, config) {
-    if (!config.string) {
-        return;
-    }
-    if (config.string.removeZeros) {
-        return removeZeros(units, duration);
-    }
-    if (config.string.trimZerosLeft) {
-        trimZerosLeft(units, duration);
-    }
-    if (config.string.trimZerosRight) {
-        trimZerosRight(units, duration);
-    }
-}
-function removeZeros(units, duration) {
-    for (var idx = 0; idx < units.length; idx++) {
-        var unit = units[idx];
-        var value = duration[unit];
-        if (value === 0) {
-            units.splice(idx, 1);
-            idx--;
-        }
-    }
-}
-function trimZerosLeft(units, duration) {
-    var idx;
-    for (idx = 0; idx < units.length; idx++) {
-        var value = duration[units[idx]];
-        if (value > 0) {
-            break;
-        }
-    }
-    units.splice(0, idx);
-}
-function trimZerosRight(units, duration) {
-    var idx;
-    for (idx = units.length - 1; idx >= 0; idx--) {
-        var value = duration[units[idx]];
-        if (value > 0) {
-            break;
-        }
-    }
-    units.splice(idx + 1);
-}
-
-
-/***/ }),
-
 /***/ "./src/duration.ts":
 /*!*************************!*\
   !*** ./src/duration.ts ***!
@@ -218,21 +160,21 @@ function trimZerosRight(units, duration) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _calculate_months__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./calculate-months */ "./src/calculate-months.ts");
-/* harmony import */ var _cleanup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cleanup */ "./src/cleanup.ts");
+/* harmony import */ var _trim_zero_values__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./trim-zero-values */ "./src/trim-zero-values.ts");
 
 
 var Duration = /** @class */ (function () {
     function Duration(duration, config) {
         this.duration = duration;
         this.config = config;
-        this.units = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
-        this.processWeeksOption();
-        this.processUnitsOption();
     }
     Duration.prototype.toString = function () {
+        this.units = this.getUnitList();
+        this.processWeeksOption();
+        this.processUnitsOption();
         var obj = this.toObject();
+        Object(_trim_zero_values__WEBPACK_IMPORTED_MODULE_1__["default"])(this.units, obj, this.config);
         var result = [];
-        Object(_cleanup__WEBPACK_IMPORTED_MODULE_1__["default"])(this.units, obj, this.config);
         for (var _i = 0, _a = this.units; _i < _a.length; _i++) {
             var unit = _a[_i];
             var value = obj[unit];
@@ -240,7 +182,45 @@ var Duration = /** @class */ (function () {
         }
         return result.join(' ');
     };
+    Duration.prototype.toTimeSpan = function () {
+        this.units = this.getUnitList();
+        this.processWeeksOption();
+        this.processUnitsOption();
+        var obj = this.toObject();
+        var result = [];
+        for (var _i = 0, _a = this.units; _i < _a.length; _i++) {
+            var unit = _a[_i];
+            var value = obj[unit];
+            if (value < 10) {
+                result.push('0' + value.toString());
+            }
+            else {
+                result.push(value.toString());
+            }
+        }
+        return result.join(':');
+    };
+    Duration.prototype.toISO8601 = function () {
+        this.units = this.getUnitList();
+        this.units.splice(this.units.indexOf('weeks'), 1);
+        var obj = this.toObject();
+        var result = [];
+        result.push('P');
+        for (var _i = 0, _a = this.units; _i < _a.length; _i++) {
+            var unit = _a[_i];
+            var value = obj[unit];
+            var item = value.toString() + unit[0].toUpperCase();
+            result.push(item);
+            if (unit === 'days') {
+                result.push('T');
+            }
+        }
+        return result.join('');
+    };
     Duration.prototype.toObject = function () {
+        if (!this.units) {
+            this.units = this.getUnitList();
+        }
         var YEAR = Duration.YEAR, WEEK = Duration.WEEK, DAY = Duration.DAY, HOUR = Duration.HOUR, MIN = Duration.MIN, SEC = Duration.SEC;
         var years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
         var rem = this.duration;
@@ -306,6 +286,9 @@ var Duration = /** @class */ (function () {
             }
         }
     };
+    Duration.prototype.getUnitList = function () {
+        return ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
+    };
     Duration.SEC = 1000;
     Duration.MIN = Duration.SEC * 60;
     Duration.HOUR = Duration.MIN * 60;
@@ -351,6 +334,64 @@ function defaults(defaultConfig) {
     }
     bootstrappedDuration.defaults = defaults;
     return bootstrappedDuration;
+}
+
+
+/***/ }),
+
+/***/ "./src/trim-zero-values.ts":
+/*!*********************************!*\
+  !*** ./src/trim-zero-values.ts ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return trimZeroValues; });
+function trimZeroValues(units, duration, config) {
+    if (!config.string) {
+        return;
+    }
+    if (config.string.removeZeros) {
+        return removeZeros(units, duration);
+    }
+    if (config.string.trimZerosLeft) {
+        trimZerosLeft(units, duration);
+    }
+    if (config.string.trimZerosRight) {
+        trimZerosRight(units, duration);
+    }
+}
+function removeZeros(units, duration) {
+    for (var idx = 0; idx < units.length; idx++) {
+        var unit = units[idx];
+        var value = duration[unit];
+        if (value === 0) {
+            units.splice(idx, 1);
+            idx--;
+        }
+    }
+}
+function trimZerosLeft(units, duration) {
+    var idx;
+    for (idx = 0; idx < units.length; idx++) {
+        var value = duration[units[idx]];
+        if (value > 0) {
+            break;
+        }
+    }
+    units.splice(0, idx);
+}
+function trimZerosRight(units, duration) {
+    var idx;
+    for (idx = units.length - 1; idx >= 0; idx--) {
+        var value = duration[units[idx]];
+        if (value > 0) {
+            break;
+        }
+    }
+    units.splice(idx + 1);
 }
 
 
