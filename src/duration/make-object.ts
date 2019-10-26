@@ -2,9 +2,8 @@ import calculateMonths from './calculate-months';
 import DurationObject from '../duration-object';
 import Duration from './index';
 import getUnitList from './get-unit-list';
-import DurationConfig from '../duration-config';
 
-export default function makeObject(duration: number, config: DurationConfig, units = getUnitList()): DurationObject {
+export default function makeObject(duration: number, units = getUnitList()): DurationObject {
     const { YEAR, WEEK, DAY, HOUR, MIN, SEC } = Duration;
 
     let years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
@@ -20,7 +19,9 @@ export default function makeObject(duration: number, config: DurationConfig, uni
         duration = monthsObj.remaining;
     }
 
-    if (units.indexOf('weeks') > -1) {
+    const requiredWeeks = units.indexOf('weeks') > -1;
+
+    if (requiredWeeks) {
         weeks = Math.floor(duration / WEEK);
         duration -= weeks * WEEK;
     }
@@ -47,14 +48,9 @@ export default function makeObject(duration: number, config: DurationConfig, uni
 
     const milliseconds = duration;
 
-    const result: DurationObject = {
-        years, months, weeks, days, hours, minutes, seconds, milliseconds
-    };
-
-    if (!config.calculateWeeks) {
-        result.days += result.weeks * 7;
-        delete result.weeks;
+    if (requiredWeeks) {
+        return { years, months, weeks, days, hours, minutes, seconds, milliseconds };
+    } else {
+        return { years, months, days, hours, minutes, seconds, milliseconds };
     }
-
-    return result;
 }

@@ -96,10 +96,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/calculate-months.ts":
-/*!*********************************!*\
-  !*** ./src/calculate-months.ts ***!
-  \*********************************/
+/***/ "./src/duration/calculate-months.ts":
+/*!******************************************!*\
+  !*** ./src/duration/calculate-months.ts ***!
+  \******************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -108,9 +108,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return calculateMonths; });
 var DAY = 1000 * 60 * 60 * 24;
 var ODD_MONTH_DAYS = 31;
-var EVEN_MONTH_DAYS = 30;
-var FEBRUARY_DAYS = 28;
-var MARCH = 10;
 var ODD_MONTH_DAYS_MS = ODD_MONTH_DAYS * DAY;
 var days = [31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 28, 31];
 function calculateMonths(duration) {
@@ -140,27 +137,217 @@ function calculateMonths(duration) {
         remaining: remaining
     };
 }
-function getDaysInNextMonth(months, odd) {
-    if (months % MARCH === 0) {
-        return FEBRUARY_DAYS;
-    }
-    return odd ? ODD_MONTH_DAYS : EVEN_MONTH_DAYS;
-}
 
 
 /***/ }),
 
-/***/ "./src/cleanup.ts":
-/*!************************!*\
-  !*** ./src/cleanup.ts ***!
-  \************************/
+/***/ "./src/duration/get-unit-list.ts":
+/*!***************************************!*\
+  !*** ./src/duration/get-unit-list.ts ***!
+  \***************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return cleanup; });
-function cleanup(units, duration, config) {
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return getUnitList; });
+function getUnitList(includeWeeks) {
+    if (includeWeeks === void 0) { includeWeeks = false; }
+    if (includeWeeks) {
+        return ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
+    }
+    else {
+        return ['years', 'months', 'days', 'hours', 'minutes', 'seconds'];
+    }
+}
+
+
+/***/ }),
+
+/***/ "./src/duration/index.ts":
+/*!*******************************!*\
+  !*** ./src/duration/index.ts ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _trim_zero_values__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./trim-zero-values */ "./src/duration/trim-zero-values.ts");
+/* harmony import */ var _make_object__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./make-object */ "./src/duration/make-object.ts");
+/* harmony import */ var _get_unit_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./get-unit-list */ "./src/duration/get-unit-list.ts");
+/* harmony import */ var _process_units_option__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./process-units-option */ "./src/duration/process-units-option.ts");
+
+
+
+
+var Duration = /** @class */ (function () {
+    function Duration(duration, options) {
+        this.duration = duration;
+        this.options = options;
+        this.units = Object(_get_unit_list__WEBPACK_IMPORTED_MODULE_2__["default"])(this.options.calculateWeeks);
+        Object(_process_units_option__WEBPACK_IMPORTED_MODULE_3__["default"])(this.units, this.options);
+    }
+    Duration.prototype.toString = function () {
+        var obj = Object(_make_object__WEBPACK_IMPORTED_MODULE_1__["default"])(this.duration, this.units);
+        Object(_trim_zero_values__WEBPACK_IMPORTED_MODULE_0__["default"])(this.units, obj, this.options);
+        var result = [];
+        for (var _i = 0, _a = this.units; _i < _a.length; _i++) {
+            var unit = _a[_i];
+            var value = obj[unit];
+            result.push(value + unit[0]);
+        }
+        return result.join(' ');
+    };
+    Duration.prototype.toTimeSpan = function () {
+        var obj = Object(_make_object__WEBPACK_IMPORTED_MODULE_1__["default"])(this.duration, this.units);
+        var result = [];
+        for (var _i = 0, _a = this.units; _i < _a.length; _i++) {
+            var unit = _a[_i];
+            var value = obj[unit];
+            if (value < 10) {
+                result.push('0' + value.toString());
+            }
+            else {
+                result.push(value.toString());
+            }
+        }
+        return result.join(':');
+    };
+    Duration.prototype.toISO8601 = function () {
+        var obj = Object(_make_object__WEBPACK_IMPORTED_MODULE_1__["default"])(this.duration, Object(_get_unit_list__WEBPACK_IMPORTED_MODULE_2__["default"])());
+        var result = [];
+        result.push('P');
+        for (var _i = 0, _a = this.units; _i < _a.length; _i++) {
+            var unit = _a[_i];
+            var value = obj[unit];
+            var item = value.toString() + unit[0].toUpperCase();
+            result.push(item);
+        }
+        result.splice(4, 0, 'T');
+        return result.join('');
+    };
+    Duration.prototype.toObject = function () {
+        return Object(_make_object__WEBPACK_IMPORTED_MODULE_1__["default"])(this.duration, this.units);
+    };
+    Duration.SEC = 1000;
+    Duration.MIN = Duration.SEC * 60;
+    Duration.HOUR = Duration.MIN * 60;
+    Duration.DAY = Duration.HOUR * 24;
+    Duration.WEEK = Duration.DAY * 7;
+    Duration.YEAR = Duration.DAY * 365;
+    return Duration;
+}());
+/* harmony default export */ __webpack_exports__["default"] = (Duration);
+
+
+/***/ }),
+
+/***/ "./src/duration/make-object.ts":
+/*!*************************************!*\
+  !*** ./src/duration/make-object.ts ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return makeObject; });
+/* harmony import */ var _calculate_months__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./calculate-months */ "./src/duration/calculate-months.ts");
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index */ "./src/duration/index.ts");
+/* harmony import */ var _get_unit_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./get-unit-list */ "./src/duration/get-unit-list.ts");
+
+
+
+function makeObject(duration, units) {
+    if (units === void 0) { units = Object(_get_unit_list__WEBPACK_IMPORTED_MODULE_2__["default"])(); }
+    var YEAR = _index__WEBPACK_IMPORTED_MODULE_1__["default"].YEAR, WEEK = _index__WEBPACK_IMPORTED_MODULE_1__["default"].WEEK, DAY = _index__WEBPACK_IMPORTED_MODULE_1__["default"].DAY, HOUR = _index__WEBPACK_IMPORTED_MODULE_1__["default"].HOUR, MIN = _index__WEBPACK_IMPORTED_MODULE_1__["default"].MIN, SEC = _index__WEBPACK_IMPORTED_MODULE_1__["default"].SEC;
+    var years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
+    if (units.indexOf('years') > -1) {
+        years = Math.floor(duration / YEAR);
+        duration -= years * YEAR;
+    }
+    if (units.indexOf('months') > -1) {
+        var monthsObj = Object(_calculate_months__WEBPACK_IMPORTED_MODULE_0__["default"])(duration);
+        months = monthsObj.months;
+        duration = monthsObj.remaining;
+    }
+    var requiredWeeks = units.indexOf('weeks') > -1;
+    if (requiredWeeks) {
+        weeks = Math.floor(duration / WEEK);
+        duration -= weeks * WEEK;
+    }
+    if (units.indexOf('days') > -1) {
+        days = Math.floor(duration / DAY);
+        duration -= days * DAY;
+    }
+    if (units.indexOf('hours') > -1) {
+        hours = Math.floor(duration / HOUR);
+        duration -= hours * HOUR;
+    }
+    if (units.indexOf('minutes') > -1) {
+        minutes = Math.floor(duration / MIN);
+        duration -= minutes * MIN;
+    }
+    if (units.indexOf('seconds') > -1) {
+        seconds = Math.floor(duration / SEC);
+        duration -= seconds * SEC;
+    }
+    var milliseconds = duration;
+    if (requiredWeeks) {
+        return { years: years, months: months, weeks: weeks, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: milliseconds };
+    }
+    else {
+        return { years: years, months: months, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: milliseconds };
+    }
+}
+
+
+/***/ }),
+
+/***/ "./src/duration/process-units-option.ts":
+/*!**********************************************!*\
+  !*** ./src/duration/process-units-option.ts ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return processUnitsOption; });
+function processUnitsOption(unitList, options) {
+    var units = options.units;
+    if (!units) {
+        return;
+    }
+    if (units.max) {
+        var idx = unitList.indexOf(units.max);
+        if (idx > 0) {
+            unitList.splice(0, idx);
+        }
+    }
+    if (units.min) {
+        var idx = unitList.indexOf(units.min);
+        if (idx > 0) {
+            unitList.splice(idx + 1);
+        }
+    }
+}
+
+
+/***/ }),
+
+/***/ "./src/duration/trim-zero-values.ts":
+/*!******************************************!*\
+  !*** ./src/duration/trim-zero-values.ts ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return trimZeroValues; });
+function trimZeroValues(units, duration, config) {
     if (!config.string) {
         return;
     }
@@ -208,117 +395,6 @@ function trimZerosRight(units, duration) {
 
 /***/ }),
 
-/***/ "./src/duration.ts":
-/*!*************************!*\
-  !*** ./src/duration.ts ***!
-  \*************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _calculate_months__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./calculate-months */ "./src/calculate-months.ts");
-/* harmony import */ var _cleanup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cleanup */ "./src/cleanup.ts");
-
-
-var Duration = /** @class */ (function () {
-    function Duration(duration, config) {
-        this.duration = duration;
-        this.config = config;
-        this.units = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
-        this.processWeeksOption();
-        this.processUnitsOption();
-    }
-    Duration.prototype.toString = function () {
-        var obj = this.toObject();
-        var result = [];
-        Object(_cleanup__WEBPACK_IMPORTED_MODULE_1__["default"])(this.units, obj, this.config);
-        for (var _i = 0, _a = this.units; _i < _a.length; _i++) {
-            var unit = _a[_i];
-            var value = obj[unit];
-            result.push(value + unit[0]);
-        }
-        return result.join(' ');
-    };
-    Duration.prototype.toObject = function () {
-        var YEAR = Duration.YEAR, WEEK = Duration.WEEK, DAY = Duration.DAY, HOUR = Duration.HOUR, MIN = Duration.MIN, SEC = Duration.SEC;
-        var years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
-        var rem = this.duration;
-        if (this.units.indexOf('years') > -1) {
-            years = Math.floor(rem / YEAR);
-            rem -= years * YEAR;
-        }
-        if (this.units.indexOf('months') > -1) {
-            var monthsObj = Object(_calculate_months__WEBPACK_IMPORTED_MODULE_0__["default"])(rem);
-            months = monthsObj.months;
-            rem = monthsObj.remaining;
-        }
-        if (this.units.indexOf('weeks') > -1) {
-            weeks = Math.floor(rem / WEEK);
-            rem -= weeks * WEEK;
-        }
-        if (this.units.indexOf('days') > -1) {
-            days = Math.floor(rem / DAY);
-            rem -= days * DAY;
-        }
-        if (this.units.indexOf('hours') > -1) {
-            hours = Math.floor(rem / HOUR);
-            rem -= hours * HOUR;
-        }
-        if (this.units.indexOf('minutes') > -1) {
-            minutes = Math.floor(rem / MIN);
-            rem -= minutes * MIN;
-        }
-        if (this.units.indexOf('seconds') > -1) {
-            seconds = Math.floor(rem / SEC);
-            rem -= seconds * SEC;
-        }
-        var milliseconds = rem;
-        var result = {
-            years: years, months: months, weeks: weeks, days: days, hours: hours, minutes: minutes, seconds: seconds, milliseconds: milliseconds
-        };
-        if (!this.config.calculateWeeks) {
-            result.days += result.weeks * 7;
-            delete result.weeks;
-        }
-        return result;
-    };
-    Duration.prototype.processWeeksOption = function () {
-        if (!this.config.calculateWeeks) {
-            this.units.splice(this.units.indexOf('weeks'), 1);
-        }
-    };
-    Duration.prototype.processUnitsOption = function () {
-        var units = this.config.units;
-        if (!units) {
-            return;
-        }
-        if (units.max) {
-            var idx = this.units.indexOf(this.config.units.max);
-            if (idx > 0) {
-                this.units.splice(0, idx);
-            }
-        }
-        if (units.min) {
-            var idx = this.units.indexOf(this.config.units.min);
-            if (idx > 0) {
-                this.units.splice(idx + 1);
-            }
-        }
-    };
-    Duration.SEC = 1000;
-    Duration.MIN = Duration.SEC * 60;
-    Duration.HOUR = Duration.MIN * 60;
-    Duration.DAY = Duration.HOUR * 24;
-    Duration.WEEK = Duration.DAY * 7;
-    Duration.YEAR = Duration.DAY * 365;
-    return Duration;
-}());
-/* harmony default export */ __webpack_exports__["default"] = (Duration);
-
-
-/***/ }),
-
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
@@ -329,7 +405,7 @@ var Duration = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "duration", function() { return duration; });
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _duration_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./duration/index */ "./src/duration/index.ts");
 
 var DEFAULT_CONFIG = {
     calculateWeeks: false,
@@ -341,7 +417,7 @@ var DEFAULT_CONFIG = {
 };
 function duration(value, config) {
     if (config === void 0) { config = DEFAULT_CONFIG; }
-    return new _duration__WEBPACK_IMPORTED_MODULE_0__["default"](value, Object.assign({}, DEFAULT_CONFIG, config));
+    return new _duration_index__WEBPACK_IMPORTED_MODULE_0__["default"](value, Object.assign({}, DEFAULT_CONFIG, config));
 }
 duration.defaults = defaults;
 function defaults(defaultConfig) {

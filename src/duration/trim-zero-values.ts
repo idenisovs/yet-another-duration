@@ -1,7 +1,7 @@
 import DurationObject from '../duration-object';
-import DurationConfig from '../duration-config';
+import DurationOptions from '../duration-options';
 
-export default function trimZeroValues(units: string[], duration: DurationObject, config: DurationConfig) {
+export default function trimZeroValues(units: string[], duration: DurationObject, config: DurationOptions) {
     if (!config.string) {
         return;
     }
